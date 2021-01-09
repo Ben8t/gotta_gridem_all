@@ -1,4 +1,5 @@
 library(tidyverse)
+library(glue)
 library(readr)
 library(ggrepel)
 library(ggimage)
@@ -25,34 +26,37 @@ first_generation <- pokemon %>%
 
 
 plot_family <- function(data, family){
-  ratio_quantiles <- quantile(data$attack/data$defense, probs=seq(0, 1, 0.25))
+  ratio_quantiles <- seq(0, 4, 0.25)
   plot <- ggplot(data) + 
     geom_gridline_ratio(max_x=max(data$defense), ratio_quantiles) +
-    geom_image(aes(x=defense, y=attack, label=name, image=PNG), size=.05) + 
+    geom_image(aes(x=defense, y=attack, label=name, image=PNG), size=.06) + 
     gghighlight(pokedex_number %in% family) +
-    coord_cartesian(xlim = c(0, 200), ylim = c(0, 200)) +
+    coord_cartesian(xlim = c(0, 185), ylim = c(0, 180)) +
     scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
     labs(x="Defense", y="Attack") +
     custom_theme()
 }
 
 ## Attack Defense plot
-ratio_quantiles <- quantile(first_generation$att_def_ratio, probs=seq(0, 1, 0.1))
-attack_defense_plot <- ggplot(first_generation) + 
-  geom_gridline_ratio(max_x=max(first_generation$defense), ratio_quantiles) +
-  geom_image(aes(x=defense, y=attack, label=name, image=PNG), size=.05) +
-  coord_cartesian(xlim = c(0, 200), ylim = c(0, 200)) +
-  scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
+
+### Classic grid
+attack_defense_plot <- ggplot(first_generation) +
+  geom_image(aes(x=defense, y=attack, label=name, image=PNG), size=.06) +
+  coord_cartesian(xlim = c(0, 185), ylim = c(0, 180)) +
+  scale_x_continuous(expand = c(0, 0)) + 
+  scale_y_continuous(expand = c(0, 0)) + 
   labs(x="Defense", y="Attack") +
-  custom_theme()
+  custom_theme_with_grid()
+  
+attack_defense_plot + ggsave("img/attack_defense_classic_plot.png", bg="white", width = 50, height = 30, units = "cm", dpi = 300)
 
-attack_defense_plot + ggsave("img/attack_defense_plot.png", bg="white", width = 50, height = 30, units = "cm", dpi = 300)
-
+### Cumul
 ratio_quantiles <- quantile(first_generation$sum_att_def, probs=seq(0, 1, 0.1))
+# ratio_quantiles <- seq(0, 400, 25)
 attack_defense_plot_bis <- ggplot(first_generation) + 
   geom_gridline_cumul(ratio_quantiles) +
-  geom_image(aes(x=defense, y=attack, label=name, image=PNG), size=.05) +
-  coord_cartesian(xlim = c(0, 200), ylim = c(0, 200)) +
+  geom_image(aes(x=defense, y=attack, label=name, image=PNG), size=.06) +
+  coord_cartesian(xlim = c(0, 185), ylim = c(0, 180)) +
   scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
   labs(x="Defense", y="Attack") +
   custom_theme()
@@ -60,9 +64,22 @@ attack_defense_plot_bis <- ggplot(first_generation) +
 attack_defense_plot_bis + ggsave("img/attack_defense_plot_bis.png", bg="white", width = 50, height = 30, units = "cm", dpi = 300)
 
 
+### Ratio
+# ratio_quantiles <- quantile(first_generation$att_def_ratio, probs=seq(0, 1, 0.1))
+ratio_quantiles <- seq(0, 4, 0.25)
+attack_defense_plot <- ggplot(first_generation) + 
+  geom_gridline_ratio(max_x=max(first_generation$defense), ratio_quantiles) +
+  geom_image(aes(x=defense, y=attack, label=name, image=PNG), size=.06) +
+  coord_cartesian(xlim = c(0, 185), ylim = c(0, 180)) +
+  scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
+  labs(x="Defense", y="Attack") +
+  custom_theme()
 
-## Attack defenses filter on family
-attack_defense_plot_filter_poli_family <- plot_family(first_generation, c(60, 61, 62))
+attack_defense_plot + ggsave("img/attack_defense_plot.png", bg="white", width = 50, height = 30, units = "cm", dpi = 300)
+
+
+### Family ratio
+attack_defense_plot_filter_poli_family <- plot_family(first_generation, c(1, 2, 3, 4, 5, 6, 7, 8, 9))
 attack_defense_plot_filter_poli_family + ggsave("img/attack_defense_plot_filter_poli_family.png", bg="white", width = 50, height = 30, units = "cm", dpi = 300)
 
 
@@ -75,3 +92,9 @@ test_plot <- ggplot(first_generation) +
   custom_theme()
 
 test_plot + ggsave("img/test_plot.png", bg="white", width = 50, height = 30, units = "cm", dpi = 300)
+
+
+
+test_data <- ggplot(first_generation) + 
+  geom_image(aes(x=base_total, y=attack, label=name, image=PNG), size=.05) + 
+  labs(x="Base", y="Attack")
