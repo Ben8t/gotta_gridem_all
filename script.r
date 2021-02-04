@@ -29,7 +29,7 @@ plot_family <- function(data, family){
   ratio_quantiles <- seq(0, 4, 0.25)
   plot <- ggplot(data) + 
     geom_gridline_ratio(max_x=max(data$defense), ratio_quantiles) +
-    geom_image(aes(x=defense, y=attack, label=name, image=PNG), size=.06) + 
+    geom_image(aes(x=defense, y=attack, label=name, image=PNG), size=.1) + 
     gghighlight(pokedex_number %in% family) +
     coord_cartesian(xlim = c(0, 185), ylim = c(0, 180)) +
     scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
@@ -79,7 +79,7 @@ attack_defense_plot + ggsave("img/attack_defense_plot.png", bg="white", width = 
 
 
 ### Family ratio
-attack_defense_plot_filter_poli_family <- plot_family(first_generation, c(1, 2, 3, 4, 5, 6, 7, 8, 9))
+attack_defense_plot_filter_poli_family <- plot_family(first_generation, c(25))
 attack_defense_plot_filter_poli_family + ggsave("img/attack_defense_plot_filter_poli_family.png", bg="white", width = 50, height = 30, units = "cm", dpi = 300)
 
 

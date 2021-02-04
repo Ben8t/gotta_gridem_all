@@ -7,7 +7,8 @@ geom_gridline_ratio <- function(max_x, quantiles){
     map(quantiles, function(v){
       geom_segment(x = 0, y = 0, xend = max_x*2, yend = v*max_x*2, linetype = "dashed", colour = "#8F9194")
       }
-    )
+    ),
+    geom_segment(x = 0, y = 0, xend = max_x*2, yend = 1*max_x*2, linetype = "solid", colour = "#8F9194")
   )
 }
 
