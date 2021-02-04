@@ -20,8 +20,9 @@ first_generation <- pokemon %>%
   mutate(
     att_def_ratio=attack/defense,
     sum_att_def=attack+defense,
-    hp_def_ratio=hp/defense
-  )
+    hp_def_ratio=hp/defense,
+  ) %>%
+  filter(hp<200)
 
 
 
@@ -98,3 +99,22 @@ test_plot + ggsave("img/test_plot.png", bg="white", width = 50, height = 30, uni
 test_data <- ggplot(first_generation) + 
   geom_image(aes(x=base_total, y=attack, label=name, image=PNG), size=.05) + 
   labs(x="Base", y="Attack")
+
+
+### Product ratio
+values <- seq(0, 250, 25)
+ratio_product_plot <- ggplot(first_generation) +
+  geom_image(aes(x=hp, y=att_def_ratio, label=name, image=PNG), size=.06) +
+  map(values, function(v){ 
+        list(
+            stat_function(fun=function(x) v / x, linetype="dashed", color="#8F9194")
+        )
+  }
+  ) +
+  coord_cartesian(xlim = c(0, max(first_generation$hp) + 20), ylim = c(0, max(first_generation$att_def_ratio) + 0.5)) +
+  scale_x_continuous(expand = c(0, 0), limits=c(0, 300)) + 
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(x="Hit Points", y="Attack/Defense Ratio") +
+  custom_theme()
+
+ratio_product_plot + ggsave("img/ratio_product_plot.png", bg="white", width = 50, height = 30, units = "cm", dpi = 300)
